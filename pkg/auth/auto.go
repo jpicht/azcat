@@ -55,8 +55,6 @@ func AuthFromEnvSharedKey() *ClientCreator {
 		return nil
 	}
 
-	_ = credential
-
 	return &ClientCreator{
 		func(serviceUrl string) (azblob.ServiceClient, error) {
 			return azblob.NewServiceClientWithSharedKey(serviceUrl, credential, &azblob.ClientOptions{})
@@ -85,6 +83,7 @@ func AuthFromMetadata() *ClientCreator {
 	credential, err := azidentity.NewEnvironmentCredential(&azidentity.EnvironmentCredentialOptions{})
 
 	if err != nil {
+		log.WithError(err).Debug("metadata failed")
 		return nil
 	}
 
