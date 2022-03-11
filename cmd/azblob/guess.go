@@ -42,6 +42,17 @@ func getExplicitMode() azcat.Mode {
 }
 
 func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient) azcat.Mode {
+	switch os.Args[0] {
+	case "azls":
+		return azcat.EMode.List()
+	case "azcat":
+		return azcat.EMode.Read()
+	case "azput":
+		return azcat.EMode.Write()
+	case "azrm":
+		return azcat.EMode.Remove()
+	}
+
 	if blobUrl.BlobName == "/" || blobUrl.BlobName == "" {
 		return azcat.EMode.List()
 	}
