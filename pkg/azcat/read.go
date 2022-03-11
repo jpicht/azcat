@@ -82,16 +82,3 @@ func Read(containerName, blobName string, client *azblob.ServiceClient) {
 		log.WithError(err).Fatal("Download failed")
 	}
 }
-
-func ReadBlock(containerName, blobName string, client *azblob.ServiceClient) {
-	log.WithFields(logrus.Fields{
-		"container": containerName,
-		"blob":      blobName,
-	}).Debug("read")
-	containerClient := client.NewContainerClient(containerName)
-	blobClient := containerClient.NewBlockBlobClient(blobName)
-	err := blobClient.DownloadBlobToWriterAt(context.TODO(), 0, azblob.CountToEnd, &adapter{os.Stdout, os.Stdout, 0}, azblob.HighLevelDownloadFromBlobOptions{})
-	if err != nil {
-		log.WithError(err).Fatal("Download failed")
-	}
-}

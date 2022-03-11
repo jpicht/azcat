@@ -14,9 +14,11 @@ import (
 )
 
 var (
-	format  = pflag.StringP("format", "f", `{{ .Name }}\n`, "Format for list mode")
+	format  = pflag.StringP("format", "f", "default", "Format for list mode")
 	formats = map[string]string{
-		"long": `{{ .Name | printf '%40s' }} {{ .Size | humanize_size }}\n`,
+		"default": "{{ .Name }}\n",
+		//"long":    "{{ .Name | printf '%40s' }}{{ .Size | humanize_size }}\n",
+		"long": "{{ printf \"%40s\" .Name }}{{ printf \"%10s\" (humanize_bytes .Size) }}  {{ .LastModified }}\n",
 	}
 )
 
@@ -72,13 +74,13 @@ func renderTemplate(format string) func(*blobInfo) {
 		templateString = format
 	}
 
-	t := template.New("output")
-	t.Parse(templateString)
-	t.Funcs(template.FuncMap{
-		"humanize_bytes": func(size uint64) string {
-			return humanize.Bytes(size)
-		},
-	})
+	t := template.Must(
+		template.New("output").Funcs(template.FuncMap{
+			"humanize_bytes": func(size uint64) string {
+				return humanize.Bytes(size)
+			},
+		}).Parse(templateString),
+	)
 
 	return func(bi *blobInfo) {
 		err := t.Execute(os.Stdout, bi)
