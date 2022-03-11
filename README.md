@@ -36,9 +36,9 @@ Supported methods (are tried in this order):
 1. connection string `AZURE_STORAGE_CONNECTION_STRING`
 1. shared key via `AZURE_STORAGE_ACCOUNT_NAME` and `AZURE_STORAGE_ACCOUNT_KEY`
 1. OAuth via `AZURE_TENANT_ID`, `AZURE_CLIENT_ID` and
-  1. `AZURE_CLIENT_SECRET` or
-  1. `AZURE_CLIENT_CERTIFICATE_PATH` or
-  2. `AZURE_USERNAME` and `AZURE_PASSWORD`
+   1. `AZURE_CLIENT_SECRET` or
+   1. `AZURE_CLIENT_CERTIFICATE_PATH` or
+   1. `AZURE_USERNAME` and `AZURE_PASSWORD`
 1. metadata service `169.254.169.254`
 
 ## Installation
