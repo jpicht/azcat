@@ -31,6 +31,11 @@ func AuthFromEnv() *ClientCreator {
 		return c
 	}
 
+	if c := AuthFromEnvOAuth(); c != nil {
+		log.Debug("got client via oauth service")
+		return c
+	}
+
 	if c := AuthFromMetadata(); c != nil {
 		log.Debug("got client via metadata service")
 		return c
@@ -44,14 +49,17 @@ func AuthFromEnvSharedKey() *ClientCreator {
 	log.Debug("trying AZURE_STORAGE_ACCOUNT_NAME + AZURE_STORAGE_ACCOUNT_KEY")
 	accountName, ok := os.LookupEnv("AZURE_STORAGE_ACCOUNT_NAME")
 	if !ok {
+		log.Debug("missing environment variable AZURE_STORAGE_ACCOUNT_NAME")
 		return nil
 	}
 	accountKey, ok := os.LookupEnv("AZURE_STORAGE_ACCOUNT_KEY")
 	if !ok {
+		log.Debug("missing environment variable AZURE_STORAGE_ACCOUNT_KEY")
 		return nil
 	}
 	credential, err := azblob.NewSharedKeyCredential(accountName, accountKey)
 	if err != nil {
+		log.WithError(err).Debug("NewSharedKeyCredential failed")
 		return nil
 	}
 
@@ -67,6 +75,7 @@ func AuthFromEnvConnectionString() *ClientCreator {
 
 	connectionString, ok := os.LookupEnv("AZURE_STORAGE_CONNECTION_STRING")
 	if !ok {
+		log.Debug("missing environment variable AZURE_STORAGE_CONNECTION_STRING")
 		return nil
 	}
 
@@ -77,10 +86,27 @@ func AuthFromEnvConnectionString() *ClientCreator {
 	}
 }
 
+func AuthFromEnvOAuth() *ClientCreator {
+	log.Debug("trying to get identity via OAuth")
+
+	credential, err := azidentity.NewEnvironmentCredential(&azidentity.EnvironmentCredentialOptions{})
+
+	if err != nil {
+		log.WithError(err).Debug("oauth failed")
+		return nil
+	}
+
+	return &ClientCreator{
+		func(serviceUrl string) (azblob.ServiceClient, error) {
+			return azblob.NewServiceClient(serviceUrl, credential, &azblob.ClientOptions{})
+		},
+	}
+}
+
 func AuthFromMetadata() *ClientCreator {
 	log.Debug("trying to get identity via metadata service")
 
-	credential, err := azidentity.NewEnvironmentCredential(&azidentity.EnvironmentCredentialOptions{})
+	credential, err := azidentity.NewManagedIdentityCredential(nil)
 
 	if err != nil {
 		log.WithError(err).Debug("metadata failed")
