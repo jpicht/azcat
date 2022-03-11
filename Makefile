@@ -1,7 +1,10 @@
-ALL=$(shell ls cmd)
+MULTI=$(shell ls cmd/multi)
 SOURCES=$(shell find pkg internal -name \*.go)
 
-all: ${ALL}
+all: ${MULTI}
 
-${ALL}: cmd/$@ ${SOURCES}
-	go build ./cmd/$@
+${MULTI}: cmd/multi/$@ $(shell find cmd/multi -name \*.go) ${SOURCES}
+	go build ./cmd/multi/$@
+
+azblob: $(shell find cmd/azblob -name \*.go) ${SOURCES}
+	go build ./cmd/azblob
