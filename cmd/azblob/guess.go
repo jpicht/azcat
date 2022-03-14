@@ -24,6 +24,10 @@ func getExplicitMode() actions.Mode {
 		modes = append(modes, actions.EMode.Remove())
 	}
 
+	if *ping {
+		modes = append(modes, actions.EMode.Ping())
+	}
+
 	if *write {
 		modes = append(modes, actions.EMode.Write())
 	}
@@ -49,6 +53,8 @@ func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient)
 		return actions.EMode.Read()
 	case "azput":
 		return actions.EMode.Write()
+	case "azping":
+		return actions.EMode.Ping()
 	case "azrm":
 		return actions.EMode.Remove()
 	}

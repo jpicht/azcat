@@ -12,6 +12,8 @@ func Run(mode Mode, bloburl azblob.BlobURLParts, client *azblob.ServiceClient) {
 		Write(bloburl.ContainerName, bloburl.BlobName, client)
 	case EMode.Remove():
 		Remove(bloburl.ContainerName, bloburl.BlobName, client)
+	case EMode.Ping():
+		Ping(client)
 	default:
 		log.WithField("mode", mode.String()).Fatal("Not implemented")
 	}

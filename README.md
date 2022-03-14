@@ -29,6 +29,11 @@ Remove blob
 azrm https://<account>.blob.core.windows.net/<container>/<blob>
 ```
 
+Test connection
+```bash
+azping https://<account>.blob.core.windows.net/<container>/<blob>
+```
+
 ## Authentication
 Currently authentication will always be automatically derived from the environment. The environment variables are conveniently named just like the `azure cli` expects.
 
@@ -48,8 +53,8 @@ There are no releases (yet), so the easiest way is installing using go install:
 go install github.com/jpicht/azcat/cmd/multi/...
 ```
 
-This will install the four standalone tools `azcat`, `azls`, `azput` and `azrm` into
+This will install the five standalone tools `azcat`, `azls`, `azping`, `azput` and `azrm` into
 your `$GOPATH/bin/` directory.
 
-There is a fifth tool called `azblob` which can be used in scenarios where more than one function is needed, but saving on size is necessary. It can either be used directly, but the command line options are a bit clunky and subject to change, or four symlinks (
-`azcat`, `azls`, `azput` and `azrm`) can be created pointing to it, and it behaves (nearly) exactly like these tools.
+There is a fifth tool called `azblob` which can be used in scenarios where more than one function is needed, but saving on size is necessary. It can either be used directly, but the command line options are a bit clunky and subject to change, or five symlinks (
+`azcat`, `azls`, `azping`, `azput` and `azrm`) can be created pointing to it, and it behaves (nearly) exactly like these tools.

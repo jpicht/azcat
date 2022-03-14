@@ -11,6 +11,7 @@ var (
 	log = internal.GetLog("azblob")
 
 	list   = pflag.BoolP("list", "l", false, "Enable list mode")
+	ping   = pflag.BoolP("ping", "p", false, "Enable ping mode")
 	read   = pflag.BoolP("read", "r", false, "Enable read mode")
 	remove = pflag.BoolP("remove", "x", false, "Enable remove mode")
 	write  = pflag.BoolP("write", "w", false, "Enable write mode")
