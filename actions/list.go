@@ -3,6 +3,7 @@ package actions
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"text/template"
 	"time"
@@ -30,6 +31,29 @@ type blobInfo struct {
 type renderFunc func(*blobInfo)
 
 func List(containerName, prefix string, client *azblob.ServiceClient) {
+	if containerName == "" {
+		ListContainers(client)
+	} else {
+		ListBlobs(containerName, prefix, client)
+	}
+}
+
+func ListContainers(client *azblob.ServiceClient) {
+	pager := client.ListContainers(nil)
+
+	if pager.Err() != nil {
+		log.WithError(pager.Err()).Fatal("Cannot list containers")
+	}
+
+	for pager.NextPage(context.TODO()) {
+		for _, container := range pager.PageResponse().ContainerItems {
+			fmt.Println(*container.Name)
+		}
+	}
+}
+
+func ListBlobs(containerName, prefix string, client *azblob.ServiceClient) {
+
 	containerClient := client.NewContainerClient(containerName)
 
 	pager := containerClient.ListBlobsFlat(&azblob.ContainerListBlobFlatSegmentOptions{
