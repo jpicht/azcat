@@ -8,3 +8,6 @@ ${MULTI}: cmd/multi/$@ $(shell find cmd/multi -name \*.go) ${SOURCES}
 
 azblob: $(shell find cmd/azblob -name \*.go) ${SOURCES}
 	go build ./cmd/azblob
+
+clean:
+	rm -f ${MULTI} azblob
