@@ -4,14 +4,12 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 	"github.com/jpicht/azcat/actions"
 	"github.com/jpicht/azcat/internal"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 
 var (
-	log = logrus.StandardLogger().WithField("module", "main")
+	log = internal.GetLog("azblob")
 
-	debug  = pflag.BoolP("debug", "d", false, "Enable debug output")
 	list   = pflag.BoolP("list", "l", false, "Enable list mode")
 	read   = pflag.BoolP("read", "r", false, "Enable read mode")
 	remove = pflag.BoolP("remove", "x", false, "Enable remove mode")
@@ -20,10 +18,6 @@ var (
 
 func main() {
 	pflag.Parse()
-
-	if *debug {
-		logrus.StandardLogger().SetLevel(logrus.DebugLevel)
-	}
 
 	mode := getExplicitMode()
 
