@@ -15,9 +15,9 @@ func Write(containerName, blobName string, client *azblob.ServiceClient) {
 	}).Debug("write")
 	containerClient := client.NewContainerClient(containerName)
 	blobClient := containerClient.NewBlockBlobClient(blobName)
-	_, err := blobClient.UploadStreamToBlockBlob(context.TODO(), os.Stdin, azblob.UploadStreamToBlockBlobOptions{})
 
+	_, err := blobClient.UploadStreamToBlockBlob(context.TODO(), os.Stdin, azblob.UploadStreamToBlockBlobOptions{})
 	if err != nil {
-		log.WithError(err).Fatal("Download failed")
+		log.WithError(err).Fatal("Write failed")
 	}
 }
