@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/jpicht/azcat/actions"
 	"github.com/jpicht/azcat/internal"
-	"github.com/jpicht/azcat/pkg/azcat"
 )
 
 func main() {
-	internal.Main(azcat.EMode.Write())
+	internal.Main(actions.EMode.Write())
 }

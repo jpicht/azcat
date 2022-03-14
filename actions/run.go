@@ -1,4 +1,4 @@
-package azcat
+package actions
 
 import "github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
 

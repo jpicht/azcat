@@ -6,30 +6,30 @@ import (
 	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
-	"github.com/jpicht/azcat/pkg/azcat"
+	"github.com/jpicht/azcat/actions"
 )
 
-func getExplicitMode() azcat.Mode {
-	modes := []azcat.Mode{}
+func getExplicitMode() actions.Mode {
+	modes := []actions.Mode{}
 
 	if *read {
-		modes = append(modes, azcat.EMode.List())
+		modes = append(modes, actions.EMode.List())
 	}
 
 	if *list {
-		modes = append(modes, azcat.EMode.List())
+		modes = append(modes, actions.EMode.List())
 	}
 
 	if *remove {
-		modes = append(modes, azcat.EMode.Remove())
+		modes = append(modes, actions.EMode.Remove())
 	}
 
 	if *write {
-		modes = append(modes, azcat.EMode.Write())
+		modes = append(modes, actions.EMode.Write())
 	}
 
 	if len(modes) == 0 {
-		return azcat.EMode.None()
+		return actions.EMode.None()
 	}
 
 	if len(modes) == 1 {
@@ -41,20 +41,20 @@ func getExplicitMode() azcat.Mode {
 	panic("unreachable")
 }
 
-func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient) azcat.Mode {
+func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient) actions.Mode {
 	switch os.Args[0] {
 	case "azls":
-		return azcat.EMode.List()
+		return actions.EMode.List()
 	case "azcat":
-		return azcat.EMode.Read()
+		return actions.EMode.Read()
 	case "azput":
-		return azcat.EMode.Write()
+		return actions.EMode.Write()
 	case "azrm":
-		return azcat.EMode.Remove()
+		return actions.EMode.Remove()
 	}
 
 	if blobUrl.BlobName == "/" || blobUrl.BlobName == "" {
-		return azcat.EMode.List()
+		return actions.EMode.List()
 	}
 
 	blobClient := serviceClient.NewContainerClient(blobUrl.ContainerName).NewBlobClient(blobUrl.BlobName)
@@ -74,14 +74,14 @@ func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient)
 	}
 
 	if !exists {
-		return azcat.EMode.Write()
+		return actions.EMode.Write()
 	}
 
 	if !stdInIsPipe {
-		return azcat.EMode.Read()
+		return actions.EMode.Read()
 	}
 
-	return azcat.EMode.None()
+	return actions.EMode.None()
 }
 
 func isPipe(f *os.File) bool {

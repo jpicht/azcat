@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/jpicht/azcat/actions"
 	"github.com/jpicht/azcat/internal"
-	"github.com/jpicht/azcat/pkg/azcat"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
@@ -36,9 +36,9 @@ func main() {
 
 	serviceClient := internal.GetClient(parsed)
 
-	if mode == azcat.EMode.None() {
+	if mode == actions.EMode.None() {
 		mode = guessMode(parsed, serviceClient)
 	}
 
-	azcat.Run(mode, parsed, serviceClient)
+	actions.Run(mode, parsed, serviceClient)
 }

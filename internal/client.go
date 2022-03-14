@@ -4,7 +4,7 @@ import (
 	"net/url"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
-	"github.com/jpicht/azcat/pkg/auth"
+	"github.com/jpicht/azcat/auth"
 	"github.com/sirupsen/logrus"
 )
 

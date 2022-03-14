@@ -1,4 +1,4 @@
-package azcat
+package actions
 
 import "github.com/sirupsen/logrus"
 

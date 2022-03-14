@@ -2,12 +2,12 @@ package internal
 
 import (
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
-	"github.com/jpicht/azcat/pkg/azcat"
+	"github.com/jpicht/azcat/actions"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 
-func Main(mode azcat.Mode) {
+func Main(mode actions.Mode) {
 	pflag.Parse()
 
 	if *debug {
@@ -26,5 +26,5 @@ func Main(mode azcat.Mode) {
 
 	serviceClient := GetClient(parsed)
 
-	azcat.Run(mode, parsed, serviceClient)
+	actions.Run(mode, parsed, serviceClient)
 }
