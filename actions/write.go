@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Write(containerName, blobName string, client *azblob.ServiceClient) {
+func Write(ctx context.Context, containerName, blobName string, client *azblob.ServiceClient) {
 	log.WithFields(logrus.Fields{
 		"container": containerName,
 		"blob":      blobName,
@@ -16,7 +16,7 @@ func Write(containerName, blobName string, client *azblob.ServiceClient) {
 	containerClient := client.NewContainerClient(containerName)
 	blobClient := containerClient.NewBlockBlobClient(blobName)
 
-	_, err := blobClient.UploadStreamToBlockBlob(context.TODO(), os.Stdin, azblob.UploadStreamToBlockBlobOptions{})
+	_, err := blobClient.UploadStreamToBlockBlob(ctx, os.Stdin, azblob.UploadStreamToBlockBlobOptions{})
 	if err != nil {
 		log.WithError(err).Fatal("Write failed")
 	}

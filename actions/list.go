@@ -30,29 +30,31 @@ type blobInfo struct {
 }
 type renderFunc func(*blobInfo)
 
-func List(containerName, prefix string, client *azblob.ServiceClient) {
+func List(ctx context.Context, containerName, prefix string, client *azblob.ServiceClient) {
 	if containerName == "" {
-		ListContainers(client)
+		ListContainers(ctx, client)
 	} else {
-		ListBlobs(containerName, prefix, client)
+		ListBlobs(ctx, containerName, prefix, client)
 	}
 }
 
-func ListContainers(client *azblob.ServiceClient) {
+func ListContainers(ctx context.Context, client *azblob.ServiceClient) {
+	log.Debug("ListContainers")
 	pager := client.ListContainers(nil)
 
 	if pager.Err() != nil {
 		log.WithError(pager.Err()).Fatal("Cannot list containers")
 	}
 
-	for pager.NextPage(context.TODO()) {
+	for pager.NextPage(ctx) {
 		for _, container := range pager.PageResponse().ContainerItems {
 			fmt.Println(*container.Name)
 		}
 	}
 }
 
-func ListBlobs(containerName, prefix string, client *azblob.ServiceClient) {
+func ListBlobs(ctx context.Context, containerName, prefix string, client *azblob.ServiceClient) {
+	log.WithField("container", containerName).Debug("ListBlobs")
 
 	containerClient := client.NewContainerClient(containerName)
 
@@ -75,7 +77,7 @@ func ListBlobs(containerName, prefix string, client *azblob.ServiceClient) {
 		render = renderTemplate(*format)
 	}
 
-	for pager.NextPage(context.TODO()) {
+	for pager.NextPage(ctx) {
 		page := pager.PageResponse()
 		if page.Segment == nil || len(page.Segment.BlobItems) == 0 {
 			continue

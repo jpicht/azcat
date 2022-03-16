@@ -68,14 +68,14 @@ func (a *adapter) WriteAt(p []byte, off int64) (n int, err error) {
 	return
 }
 
-func Read(containerName, blobName string, client *azblob.ServiceClient) {
+func Read(ctx context.Context, containerName, blobName string, client *azblob.ServiceClient) {
 	log.WithFields(logrus.Fields{
 		"container": containerName,
 		"blob":      blobName,
 	}).Debug("read")
 	containerClient := client.NewContainerClient(containerName)
 	blobClient := containerClient.NewBlobClient(blobName)
-	err := blobClient.DownloadBlobToWriterAt(context.TODO(), 0, azblob.CountToEnd, &adapter{os.Stdout, os.Stdout, 0}, azblob.HighLevelDownloadFromBlobOptions{
+	err := blobClient.DownloadBlobToWriterAt(ctx, 0, azblob.CountToEnd, &adapter{os.Stdout, os.Stdout, 0}, azblob.HighLevelDownloadFromBlobOptions{
 		Parallelism: 1,
 	})
 	if err != nil {
