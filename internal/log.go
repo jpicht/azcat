@@ -6,14 +6,17 @@ import (
 )
 
 var (
-	log = GetLog("internal")
-
 	debug = pflag.BoolP("debug", "d", false, "Enable debug output")
 )
 
 func GetLog(module string) logrus.FieldLogger {
-	if debug != nil && *debug {
+	if debug == nil {
+		pflag.Parse()
+	}
+
+	if *debug {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
+
 	return logrus.StandardLogger().WithField("module", module)
 }

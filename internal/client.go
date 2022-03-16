@@ -9,6 +9,7 @@ import (
 )
 
 func GetClient(parsed azblob.BlobURLParts) *azblob.ServiceClient {
+	log := GetLog("internal.GetClient")
 	clientBuilder := auth.AuthFromEnv()
 	if clientBuilder == nil {
 		log.Fatal("No client credentials could be detected")

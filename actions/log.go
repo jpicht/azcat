@@ -1,7 +1,7 @@
 package actions
 
-import "github.com/sirupsen/logrus"
+import "github.com/jpicht/azcat/internal"
 
 var (
-	log = logrus.StandardLogger().WithField("module", "azcat")
+	log = internal.GetLog("actions")
 )

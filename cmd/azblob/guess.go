@@ -40,7 +40,7 @@ func getExplicitMode() actions.Mode {
 		return modes[0]
 	}
 
-	log.Fatal("list, remove and write are mutually exclusive")
+	log.Fatal("list, ping, read, remove and write are mutually exclusive")
 
 	panic("unreachable")
 }
