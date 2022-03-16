@@ -8,10 +8,6 @@ import (
 )
 
 func Ping(ctx context.Context, client *azblob.ServiceClient) {
-	_, err := client.GetAccountInfo(ctx)
-	if err != nil {
-		os.Exit(1)
-	}
-
+	// we only get here, if client setup was successful
 	os.Exit(0)
 }
