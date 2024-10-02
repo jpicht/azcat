@@ -3,18 +3,14 @@ package internal
 import (
 	"net/url"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
-	"github.com/jpicht/azcat/auth"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/service"
 	"github.com/sirupsen/logrus"
 )
 
-func GetClient(parsed azblob.BlobURLParts) *azblob.ServiceClient {
+func GetClient(parsed azblob.URLParts) *service.Client {
 	log := GetLog("internal.GetClient")
-	clientBuilder := auth.AuthFromEnv()
-	if clientBuilder == nil {
-		log.Fatal("No client credentials could be detected")
-		return nil
-	}
 
 	service := (&url.URL{Scheme: parsed.Scheme, Host: parsed.Host}).String()
 
@@ -24,11 +20,17 @@ func GetClient(parsed azblob.BlobURLParts) *azblob.ServiceClient {
 		"blob":        parsed.BlobName,
 	}).Debug()
 
-	serviceClient, err := clientBuilder.CreateClient(service)
+	credential, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		log.WithError(err).Debug("default creds failed")
+		return nil
+	}
+
+	azclient, err := azblob.NewClient(service, credential, &azblob.ClientOptions{})
 	if err != nil {
 		log.WithError(err).Fatalf("Cannot create service client")
 		return nil
 	}
 
-	return &serviceClient
+	return azclient.ServiceClient()
 }

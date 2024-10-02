@@ -1,7 +1,7 @@
 package actions
 
 import (
-	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/sas"
 	"github.com/jpicht/azcat/internal"
 	"github.com/spf13/pflag"
 )
@@ -21,7 +21,7 @@ func Main(mode Mode) {
 		log.Fatal("Azure URL cannot be empty")
 	}
 
-	parsed, err := azblob.NewBlobURLParts(raw)
+	parsed, err := sas.ParseURL(raw)
 
 	if err != nil {
 		log.WithError(err).WithField("url", raw).Fatalf("invalid URL")

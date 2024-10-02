@@ -3,11 +3,11 @@ package actions
 import (
 	"context"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/service"
 	"github.com/sirupsen/logrus"
 )
 
-func Remove(ctx context.Context, containerName, blobName string, client *azblob.ServiceClient) {
+func Remove(ctx context.Context, containerName, blobName string, client *service.Client) {
 	log.WithFields(logrus.Fields{
 		"container": containerName,
 		"blob":      blobName,
