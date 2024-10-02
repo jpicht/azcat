@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/service"
 	"github.com/jpicht/azcat/actions"
 )
 
@@ -45,7 +46,7 @@ func getExplicitMode() actions.Mode {
 	panic("unreachable")
 }
 
-func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient) actions.Mode {
+func guessMode(blobUrl azblob.URLParts, serviceClient *service.Client) actions.Mode {
 	switch os.Args[0] {
 	case "azls":
 		return actions.EMode.List()
@@ -64,7 +65,7 @@ func guessMode(blobUrl azblob.BlobURLParts, serviceClient *azblob.ServiceClient)
 	}
 
 	blobClient := serviceClient.NewContainerClient(blobUrl.ContainerName).NewBlobClient(blobUrl.BlobName)
-	_, err := blobClient.GetProperties(context.TODO(), &azblob.GetBlobPropertiesOptions{})
+	_, err := blobClient.GetProperties(context.TODO(), nil)
 
 	var (
 		exists      = true

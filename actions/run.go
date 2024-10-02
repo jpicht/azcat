@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/service"
 )
 
-func Run(mode Mode, bloburl azblob.BlobURLParts, client *azblob.ServiceClient) {
+func Run(mode Mode, bloburl azblob.URLParts, client *service.Client) {
 	context, cancel := context.WithTimeout(context.Background(), getTimeout(mode))
 	defer cancel()
 

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
+	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/service"
 	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
@@ -22,7 +23,7 @@ var (
 	}
 )
 
-//type renderer func(*azblob.BlobItemInternal)
+// type renderer func(*azblob.BlobItemInternal)
 type blobInfo struct {
 	Name         string    `json:"name"`
 	Size         uint64    `json:"size"`
@@ -30,7 +31,7 @@ type blobInfo struct {
 }
 type renderFunc func(*blobInfo)
 
-func List(ctx context.Context, containerName, prefix string, client *azblob.ServiceClient) {
+func List(ctx context.Context, containerName, prefix string, client *service.Client) {
 	if containerName == "" {
 		ListContainers(ctx, client)
 	} else {
@@ -38,35 +39,32 @@ func List(ctx context.Context, containerName, prefix string, client *azblob.Serv
 	}
 }
 
-func ListContainers(ctx context.Context, client *azblob.ServiceClient) {
+func ListContainers(ctx context.Context, client *service.Client) {
 	log.Debug("ListContainers")
-	pager := client.ListContainers(nil)
+	pager := client.NewListContainersPager(nil)
 
-	if pager.Err() != nil {
-		log.WithError(pager.Err()).Fatal("Cannot list containers")
-	}
-
-	for pager.NextPage(ctx) {
-		for _, container := range pager.PageResponse().ContainerItems {
+	for pager.More() {
+		page, err := pager.NextPage(ctx)
+		if err != nil {
+			log.WithError(err).Fatal("Cannot list containers")
+			return
+		}
+		for _, container := range page.ContainerItems {
 			fmt.Println(*container.Name)
 		}
 	}
 }
 
-func ListBlobs(ctx context.Context, containerName, prefix string, client *azblob.ServiceClient) {
+func ListBlobs(ctx context.Context, containerName, prefix string, client *service.Client) {
 	log.WithField("container", containerName).Debug("ListBlobs")
 
 	containerClient := client.NewContainerClient(containerName)
 
-	pager := containerClient.ListBlobsFlat(&azblob.ContainerListBlobFlatSegmentOptions{
+	pager := containerClient.NewListBlobsFlatPager(&azblob.ListBlobsFlatOptions{
 		Prefix: &prefix,
 	})
 	if pager == nil {
 		log.Fatalf("Cannot list blobs, ListBlobsFlat returned nil")
-		return
-	}
-	if pager.Err() != nil {
-		log.WithError(pager.Err()).Fatalf("Cannot list blobs")
 		return
 	}
 
@@ -77,8 +75,12 @@ func ListBlobs(ctx context.Context, containerName, prefix string, client *azblob
 		render = renderTemplate(*format)
 	}
 
-	for pager.NextPage(ctx) {
-		page := pager.PageResponse()
+	for pager.More() {
+		page, err := pager.NextPage(ctx)
+		if err != nil {
+			log.WithError(err).Fatalf("Cannot list blobs")
+			return
+		}
 		if page.Segment == nil || len(page.Segment.BlobItems) == 0 {
 			continue
 		}
