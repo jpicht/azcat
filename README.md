@@ -35,16 +35,7 @@ azping https://<account>.blob.core.windows.net/<container>/<blob>
 ```
 
 ## Authentication
-Currently authentication will always be automatically derived from the environment. The environment variables are conveniently named just like the `azure cli` expects.
-
-Supported methods (are tried in this order):
-1. connection string `AZURE_STORAGE_CONNECTION_STRING`
-1. shared key via `AZURE_STORAGE_ACCOUNT_NAME` and `AZURE_STORAGE_ACCOUNT_KEY`
-1. OAuth via `AZURE_TENANT_ID`, `AZURE_CLIENT_ID` and
-   1. `AZURE_CLIENT_SECRET` or
-   1. `AZURE_CLIENT_CERTIFICATE_PATH` or
-   1. `AZURE_USERNAME` and `AZURE_PASSWORD`
-1. metadata service `169.254.169.254`
+Currently authentication will always be automatically derived from the environment. We're using the default azure credential discovery flow implemented in [azidentity.NewDefaultAzureCredential](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azidentity#NewDefaultAzureCredential).
 
 ## Installation
 There are no releases (yet), so the easiest way is installing using go install:
@@ -58,3 +49,7 @@ your `$GOPATH/bin/` directory.
 
 There is a fifth tool called `azblob` which can be used in scenarios where more than one function is needed, but saving on size is necessary. It can either be used directly, but the command line options are a bit clunky and subject to change, or five symlinks (
 `azcat`, `azls`, `azping`, `azput` and `azrm`) can be created pointing to it, and it behaves (nearly) exactly like these tools.
+
+## Contributors
+
+Thank you @voyvodov for updating the credential flow.
